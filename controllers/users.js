@@ -61,7 +61,7 @@ router.post('/login', async (req, res) => {
         } else {
             console.log('login successful')
             res.cookie('userId', user.id)
-            res.redirect('/')
+            res.redirect('/users/profile')
         }
         
     }catch(err) {
@@ -78,9 +78,16 @@ router.get('/logout', (req, res) => {
     res.redirect('/')
 })
 
-
-
-
+router.get('/profile', (req, res) => {
+    // if the user is not logged in, redirect to login form
+    if (!res.locals.user) {
+        res.redirect('/users/login?message=You must authenticate before you are authorized to view this resource')
+    } else {
+    // otherwise, show them their profile
+    res.render('users/profile.ejs', {
+        user: res.locals.user
+    })
+}})
 
 
 

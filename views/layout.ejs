@@ -8,10 +8,17 @@
 </head>
 <body>
     <nav>
+        <a href="/">Home</a>
         <ul>
-            <li><a href="/users/new">Sign Up</a></li>
-            <li><a href="/users/login">Login</a></li>
-            <li><a href="/users/logout">Logout</a></li>
+            <!-- if the user is logged in -->
+            <!-- all data in res.locals is usable in layout -->
+            <% if (user) { %>
+                <li><a href="/users/profile">Profile</a></li>
+                <li><a href="/users/logout">Logout</a></li>
+            <%} else { %>
+                <li><a href="/users/new">Sign Up</a></li>
+                <li><a href="/users/login">Login</a></li>
+            <%} %>
         </ul>
     </nav>
     <h1>Hello User, Welcome to the User App</h1>
