@@ -2,14 +2,33 @@
 
 ## Overview
 
-## Part 0: Authentication and Authorization
+## Authentication and Authorization
 Authentication is determining if a user is who they say they are. A public field like email is not enough to make this determination, and this is why we have passwords. Only the _authentic_ owner of that email will know the password. That's why the process of verifying user credentials is called authentication.
 
 Authorization is a separate process, and it can only happen after authentication. Once we've determined that a user is who they claim to be, we may want to check if they have permission to take a specific action. For example, the customers of our site may not have the same permissions as an admin. We are checking if the (already-authenticated) user is _authorized_ to take an action, which is why this is called authorization.
 
 Today we will only be implementing authentication, but it's important to know that these are two separate processes.
 
+## Part 0: Scaffolding the app
+
+Set up a new node/express app for your project 2
+
+* Make a new directory for your project 2 app
+* Initialize node and git
+* Create a .gitignore that ignores node_modules and .env
+* Create a readme.md, a .env, and an entry point file (index.js)
+* install express, ejs, express-ejs-layouts, and dotenv.
+* Set up your express route to successfully render a home view
+
+## Part 0.5 Get your database ready
+
+* Install pg and sequelize
+* Initialize sequelize
+* Create a database for this app createdb express-auth-boilerplate
+* Edit theconfig.json as needed
+
 ## Part 1: Creating a user
+
 Creating a user is what happens when you sign up on a site. In many ways, it is exactly like creating any other CRUDable resource: you submit a form, it `POST`s to a `/users` endpoint, and we INSERT INTO the users table.
 
 1. Use sequelize to create a users table. It should have the columns of email and password.
@@ -23,6 +42,7 @@ After these steps are in place, we will take an extra step that we haven't taken
 Inside the create user route, let's set the cookie with `res.cookie('userId', <the user's id>)`. Then, let's look at the cookie in our browser. It's important to note that you can clear the cookie manually from the browser: we'll have to do this by hand until we build the logout system.
 
 ## Part 2: Logging in
+
 In this section we will build some new routes:
 
 1. `GET /users/login`: this serves up a login form. It should be very much like the form to create a new user, but it should POST to `/users/login` instead of `/users`. Put a link to this route in a nav bar inside layout.ejs.
@@ -70,11 +90,13 @@ We can test this out by logging res.locals in any route, and by referring to use
 We should wrap parts 1 and 2 in an `if (req.cookies.userId)`, so that if no one is logged in, we don't try to look up a user with an id of undefined. What should we set the res.locals.user to if there was no req.cookies.userId?
 
 ## Part 4: Doing something with the logged in user
+
 Let's do two things with this logged in user:
 1. Modify our nav bar: if there is a logged in user, display 2 links: Log Out and Profile (explained below). If there is no logged in user, display Log In and Sign Up links.
 1. Create a `GET /users/profile` route: If there is a logged in user, it should render a view file that just says "Hello, {user's email}!" (the world's simplest profile). If there is no logged in user, it should redirect them to the login page.
 
 ## Part 5: Security
+
 ### Part 5a: encrypting our cookies
 Right now, there's nothing to stop someone from manually changing their userId cookie in their browser, effectively impersonating another user. To change that, we are going to encrypt the user id value using a secret string before we send it out in the cookie. And when it comes back on subsequent requests, we are going to decrypt it using the same secret string. Because no one else knows our secret string, no one can craft a cookie to impersonate another user.
 
@@ -94,6 +116,7 @@ const user = await models.user.findByPk(decryptedIdString)
 1. We shouldn't actually have our super secret string in our code! If we commit it to github, anyone can look at it and use it to craft cookies. Instead, we should put it into a .env file to keep it secret. This works just like when we put our api keys into a .env file.
 
 ### Part 5b: hashing our passwords
+
 Data security and breaches is a topic that some people devote their entire careers to. We are not those people. But those people advise us that we do not want to store our passwords in our db in plain text. Instead, we should hash them. Hashing is the process of convering a string into an obfuscated string. There is a key difference between hashing and encrypting: something that's been encrypted can be decrypted if you have the secret string. But something that's been hashed can _never_ be recovered into its original string. For this reason we say that hashing is _one-way_.
 
 Here's how we will leverage this:
